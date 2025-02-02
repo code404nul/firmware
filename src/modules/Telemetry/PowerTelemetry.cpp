@@ -37,9 +37,9 @@ int32_t PowerTelemetryModule::runOnce()
         without having to configure it from the PythonAPI or WebUI.
     */
 
-    // moduleConfig.telemetry.power_measurement_enabled = 1;
-    // moduleConfig.telemetry.power_screen_enabled = 1;
-    // moduleConfig.telemetry.power_update_interval = 45;
+    moduleConfig.telemetry.power_measurement_enabled = 1;
+    moduleConfig.telemetry.power_screen_enabled = 1;
+    moduleConfig.telemetry.power_update_interval = 45;
 
     if (!(moduleConfig.telemetry.power_measurement_enabled)) {
         // If this module is not enabled, and the user doesn't want the display screen don't waste any OSThread time on it
@@ -65,7 +65,7 @@ int32_t PowerTelemetryModule::runOnce()
             if (max17048Sensor.hasSensor() && !max17048Sensor.isInitialized())
                 result = max17048Sensor.runOnce();
         }
-        return result == UINT32_MAX ? disable() : setStartDelay();
+        return result;
 #else
         return disable();
 #endif

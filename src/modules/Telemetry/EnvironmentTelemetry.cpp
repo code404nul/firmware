@@ -92,9 +92,9 @@ int32_t EnvironmentTelemetryModule::runOnce()
         without having to configure it from the PythonAPI or WebUI.
     */
 
-    // moduleConfig.telemetry.environment_measurement_enabled = 1;
-    // moduleConfig.telemetry.environment_screen_enabled = 1;
-    // moduleConfig.telemetry.environment_update_interval = 15;
+    moduleConfig.telemetry.environment_measurement_enabled = 1;
+    moduleConfig.telemetry.environment_screen_enabled = 1;
+    moduleConfig.telemetry.environment_update_interval = 1;
 
     if (!(moduleConfig.telemetry.environment_measurement_enabled || moduleConfig.telemetry.environment_screen_enabled)) {
         // If this module is not enabled, and the user doesn't want the display screen don't waste any OSThread time on it
@@ -107,6 +107,8 @@ int32_t EnvironmentTelemetryModule::runOnce()
 
         if (moduleConfig.telemetry.environment_measurement_enabled) {
             LOG_INFO("Environment Telemetry: init");
+            // it's possible to have this module enabled, only for displaying values on the screen.
+            // therefore, we should only enable the sensor loop if measurement is also enabled
 #ifdef SENSECAP_INDICATOR
             result = indicatorSensor.runOnce();
 #endif
@@ -169,9 +171,7 @@ int32_t EnvironmentTelemetryModule::runOnce()
 #endif
 #endif
         }
-        // it's possible to have this module enabled, only for displaying values on the screen.
-        // therefore, we should only enable the sensor loop if measurement is also enabled
-        return result == UINT32_MAX ? disable() : setStartDelay();
+        return result;
     } else {
         // if we somehow got to a second run of this module with measurement disabled, then just wait forever
         if (!moduleConfig.telemetry.environment_measurement_enabled) {
